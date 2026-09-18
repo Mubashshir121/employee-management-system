@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Leave Requests{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Leave requests</h1>
+  <div class="btn-group btn-group-sm">
+    {% for s in ['pending', 'approved', 'rejected', 'all'] %}
+    <a href="{{ url_for('admin.leaves', status=s) }}" class="btn btn-outline-secondary {% if status_filter == s %}active{% endif %}">{{ s|capitalize }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card-flat">
+  <table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for l in leaves %}
+      <tr>
+        <td>{{ l.employee.full_name }}</td>
+        <td>{{ l.leave_type }}</td>
+        <td>{{ l.start_date }} – {{ l.end_date }}</td>
+        <td>{{ l.reason or '—' }}</td>
+        <td><span class="badge badge-status-{{ l.status }}">{{ l.status }}</span></td>
+        <td class="text-end">
+          {% if l.status == 'pending' %}
+          <form action="{{ url_for('admin.decide_leave', leave_id=l.id, decision='approved') }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Approve</button>
+          </form>
+          <form action="{{ url_for('admin.decide_leave', leave_id=l.id, decision='rejected') }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-muted text-center py-3">No leave requests found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

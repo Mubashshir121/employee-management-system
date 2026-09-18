@@ -1,0 +1,206 @@
+:root {
+  --ink: #1f2937;
+  --ink-soft: #5b6472;
+  --paper: #f7f7f4;
+  --panel: #ffffff;
+  --line: #e3e2dd;
+  --sidebar: #1f2a24;
+  --sidebar-text: #cdd6d0;
+  --accent: #2f6f5e;
+  --accent-dark: #234f42;
+  --warn: #b8562f;
+  --danger: #a13a3a;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  padding: 1.5rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .brand {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+}
+
+.sidebar .brand span {
+  color: var(--accent);
+}
+
+.sidebar a.nav-link {
+  color: var(--sidebar-text);
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.15rem;
+  font-size: 0.92rem;
+}
+
+.sidebar a.nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.sidebar a.nav-link.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.sidebar .sidebar-footer {
+  margin-top: auto;
+  font-size: 0.8rem;
+  color: #8fa094;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+}
+
+.main {
+  flex: 1;
+  padding: 1.8rem 2.2rem;
+  max-width: 1100px;
+}
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.8rem;
+}
+
+.page-header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-flat {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin-top: 0.2rem;
+}
+
+.table {
+  background: var(--panel);
+}
+
+.table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+.badge-status-present, .badge-status-approved { background: var(--accent); }
+.badge-status-absent, .badge-status-rejected { background: var(--danger); }
+.badge-status-leave, .badge-status-pending { background: var(--warn); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+.btn-outline-primary {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-outline-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.auth-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sidebar);
+}
+
+.auth-card {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 2.2rem 2.4rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-card h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.auth-card .sub {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  margin-bottom: 1.4rem;
+}
+
+/* Full-screen login page */
+.auth-main {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+}
+
+.auth-main .auth-wrap {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+}

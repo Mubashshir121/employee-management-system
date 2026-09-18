@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Departments{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Departments</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-5 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Add department</h2>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <input type="text" class="form-control" name="description">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card-flat">
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>Name</th><th>Description</th><th>Employees</th><th></th></tr></thead>
+        <tbody>
+          {% for d in departments %}
+          <tr>
+            <td>{{ d.name }}</td>
+            <td>{{ d.description or '—' }}</td>
+            <td>{{ d.employees|length }}</td>
+            <td class="text-end">
+              <form action="{{ url_for('admin.delete_department', department_id=d.id) }}" method="post" onsubmit="return confirm('Delete this department?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-muted text-center py-3">No departments yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
