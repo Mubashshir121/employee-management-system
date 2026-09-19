@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Welcome, {{ employee.full_name }}</h1>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{ employee.department.name if employee.department else '—' }}</div>
+    <div class="stat-label">Department</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ today_attendance.status|capitalize if today_attendance else 'Not marked' }}</div>
+    <div class="stat-label">Today's attendance</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ pending_leaves }}</div>
+    <div class="stat-label">Pending leave requests</div>
+  </div>
+</div>
+
+<div class="card-flat">
+  <p class="mb-2">Quick actions:</p>
+  <a href="{{ url_for('employee.attendance') }}" class="btn btn-sm btn-outline-primary me-2">Mark attendance</a>
+  <a href="{{ url_for('employee.leave') }}" class="btn btn-sm btn-outline-primary">Apply for leave</a>
+</div>
+{% endblock %}

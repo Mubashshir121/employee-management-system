@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Attendance</h1>
+  <form method="get" class="d-flex gap-2">
+    <input type="date" class="form-control form-control-sm" name="date" value="{{ selected_date }}" onchange="this.form.submit()">
+  </form>
+</div>
+
+<div class="row">
+  <div class="col-md-7 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Marked — {{ selected_date }}</h2>
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>Employee</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in records %}
+          <tr>
+            <td>{{ r.employee.full_name }}</td>
+            <td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2" class="text-muted text-center py-3">No attendance marked yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-5 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Mark attendance</h2>
+      <form method="post" action="{{ url_for('admin.mark_attendance') }}">
+        <input type="hidden" name="date" value="{{ selected_date }}">
+        <div class="mb-3">
+          <label class="form-label">Employee</label>
+          <select class="form-select" name="employee_id" required>
+            {% for e in unmarked %}
+            <option value="{{ e.id }}">{{ e.full_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" name="status">
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+            <option value="leave">On leave</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

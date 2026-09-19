@@ -1,0 +1,6 @@
+venv_new/
+ems/venv/
+.env
+ems/.env
+__pycache__/
+*.pyc

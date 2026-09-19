@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My profile</h1>
+</div>
+<div class="card-flat" style="max-width: 520px;">
+  <table class="table table-borderless table-sm mb-0">
+    <tr><th style="width:160px;">Employee code</th><td>{{ employee.employee_code }}</td></tr>
+    <tr><th>Full name</th><td>{{ employee.full_name }}</td></tr>
+    <tr><th>Designation</th><td>{{ employee.designation or '—' }}</td></tr>
+    <tr><th>Department</th><td>{{ employee.department.name if employee.department else '—' }}</td></tr>
+    <tr><th>Phone</th><td>{{ employee.phone or '—' }}</td></tr>
+    <tr><th>Address</th><td>{{ employee.address or '—' }}</td></tr>
+    <tr><th>Date joined</th><td>{{ employee.date_joined }}</td></tr>
+    <tr><th>Email</th><td>{{ employee.user.email }}</td></tr>
+  </table>
+</div>
+{% endblock %}

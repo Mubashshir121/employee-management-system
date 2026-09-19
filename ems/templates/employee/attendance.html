@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}My Attendance{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My attendance</h1>
+  <form method="post">
+    <button type="submit" class="btn btn-primary btn-sm">Mark today present</button>
+  </form>
+</div>
+
+<div class="card-flat">
+  <table class="table table-sm align-middle mb-0">
+    <thead><tr><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="2" class="text-muted text-center py-3">No attendance history yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
