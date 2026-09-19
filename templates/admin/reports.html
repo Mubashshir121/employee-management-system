@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Reports</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Employees by department</h2>
+      <table class="table table-sm mb-0">
+        <tbody>
+          {% for name, count in dept_counts %}
+          <tr><td>{{ name }}</td><td class="text-end">{{ count }}</td></tr>
+          {% else %}
+          <tr><td class="text-muted">No departments yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Leave requests by status</h2>
+      <table class="table table-sm mb-0">
+        <tbody>
+          {% for status, count in leave_counts %}
+          <tr><td><span class="badge badge-status-{{ status }}">{{ status }}</span></td><td class="text-end">{{ count }}</td></tr>
+          {% else %}
+          <tr><td class="text-muted">No leave requests yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="stat-card">
+      <div class="stat-value">{{ total_net_salary }}</div>
+      <div class="stat-label">Total net salary paid (all records)</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

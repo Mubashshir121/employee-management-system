@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Leave{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Leave</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-5 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">Apply for leave</h2>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Leave type</label>
+          <select class="form-select" name="leave_type" required>
+            <option value="Casual">Casual</option>
+            <option value="Sick">Sick</option>
+            <option value="Earned">Earned</option>
+            <option value="Unpaid">Unpaid</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">Start date</label>
+            <input type="date" class="form-control" name="start_date" required>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">End date</label>
+            <input type="date" class="form-control" name="end_date" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Reason</label>
+          <textarea class="form-control" name="reason" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Submit request</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-7 mb-3">
+    <div class="card-flat">
+      <h2 class="h6 mb-3">My leave history</h2>
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for l in leave_history %}
+          <tr>
+            <td>{{ l.leave_type }}</td>
+            <td>{{ l.start_date }} – {{ l.end_date }}</td>
+            <td><span class="badge badge-status-{{ l.status }}">{{ l.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="text-muted text-center py-3">No leave requests yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

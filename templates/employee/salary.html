@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My Salary{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My salary</h1>
+</div>
+<div class="card-flat">
+  <table class="table table-sm align-middle mb-0">
+    <thead><tr><th>Month/Year</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th></tr></thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td>{{ r.month }}/{{ r.year }}</td>
+        <td>{{ r.basic }}</td>
+        <td>{{ r.allowances }}</td>
+        <td>{{ r.deductions }}</td>
+        <td><strong>{{ r.net_salary }}</strong></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-3">No salary records yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
