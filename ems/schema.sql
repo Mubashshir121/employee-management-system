@@ -1,8 +1,7 @@
 -- Employee Management System — MySQL schema
 -- Run this manually if you prefer raw SQL instead of `flask --app app init-db`.
 
-CREATE DATABASE IF NOT EXISTS employee_management CHARACTER SET utf8mb4;
-USE employee_management;
+USE railway;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
