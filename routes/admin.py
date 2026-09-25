@@ -31,7 +31,13 @@ def dashboard():
 @admin_required
 def employees():
     all_employees = Employee.query.order_by(Employee.id).all()
-    return render_template("admin/employees.html", employees=all_employees)
+    departments = Department.query.order_by(Department.name).all()
+
+    return render_template(
+        "admin/employees.html",
+        employees=all_employees,
+        departments=departments
+    )
 
 
 @admin_bp.route("/employees/add", methods=["GET", "POST"])
@@ -254,20 +260,99 @@ def salary(employee_id):
 @login_required
 @admin_required
 def reports():
+    # Employees by department
     dept_counts = (
         db.session.query(Department.name, db.func.count(Employee.id))
         .outerjoin(Employee)
         .group_by(Department.name)
         .all()
     )
+
+    # Leave status distribution
     leave_counts = (
-        db.session.query(Leave.status, db.func.count(Leave.id)).group_by(Leave.status).all()
+        db.session.query(Leave.status, db.func.count(Leave.id))
+        .group_by(Leave.status)
+        .all()
     )
-    total_net_salary = db.session.query(db.func.coalesce(db.func.sum(Salary.net_salary), 0)).scalar()
+
+    # Attendance status distribution
+    attendance_counts = (
+        db.session.query(Attendance.status, db.func.count(Attendance.id))
+        .group_by(Attendance.status)
+        .all()
+    )
+
+    # Monthly attendance
+    monthly_attendance = (
+        db.session.query(
+            db.func.date_format(Attendance.date, "%Y-%m"),
+            db.func.count(Attendance.id)
+        )
+        .group_by(db.func.date_format(Attendance.date, "%Y-%m"))
+        .order_by(db.func.date_format(Attendance.date, "%Y-%m"))
+        .all()
+    )
+
+    # Total net salary
+    total_net_salary = db.session.query(
+        db.func.coalesce(db.func.sum(Salary.net_salary), 0)
+    ).scalar()
 
     return render_template(
         "admin/reports.html",
         dept_counts=dept_counts,
         leave_counts=leave_counts,
+        attendance_counts=attendance_counts,
+        monthly_attendance=monthly_attendance,
         total_net_salary=total_net_salary,
+    )
+
+    # ---------- Employee Details ----------
+
+@admin_bp.route("/employee-details")
+@login_required
+@admin_required
+def employee_details():
+    all_employees = Employee.query.order_by(Employee.full_name).all()
+
+    return render_template(
+        "admin/employee_details.html",
+        employees=all_employees
+    )
+
+    # ---------- Employee Profile ----------
+
+@admin_bp.route("/employee-details/<int:employee_id>")
+@login_required
+@admin_required
+def employee_profile(employee_id):
+    employee = Employee.query.get_or_404(employee_id)
+
+    salary_records = (
+        Salary.query
+        .filter_by(employee_id=employee.id)
+        .order_by(Salary.year.desc(), Salary.month.desc())
+        .all()
+    )
+
+    attendance_records = (
+        Attendance.query
+        .filter_by(employee_id=employee.id)
+        .order_by(Attendance.date.desc())
+        .all()
+    )
+
+    leave_records = (
+        Leave.query
+        .filter_by(employee_id=employee.id)
+        .order_by(Leave.applied_on.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin/employee_profile.html",
+        employee=employee,
+        salary_records=salary_records,
+        attendance_records=attendance_records,
+        leave_records=leave_records,
     )

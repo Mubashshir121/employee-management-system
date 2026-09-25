@@ -1,28 +1,192 @@
 {% extends "base.html" %}
+
 {% block title %}My Dashboard{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Welcome, {{ employee.full_name }}</h1>
+
+<!-- Employee Header -->
+<div class="dashboard-header">
+
+    <div>
+        <h1>Welcome, {{ employee.full_name }}</h1>
+        <p>Here's an overview of your employee account</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-user"></i>
+        Employee Portal
+    </div>
+
 </div>
 
+
+<!-- Employee Statistics -->
 <div class="stat-grid">
-  <div class="stat-card">
-    <div class="stat-value">{{ employee.department.name if employee.department else '—' }}</div>
-    <div class="stat-label">Department</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ today_attendance.status|capitalize if today_attendance else 'Not marked' }}</div>
-    <div class="stat-label">Today's attendance</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ pending_leaves }}</div>
-    <div class="stat-label">Pending leave requests</div>
-  </div>
+
+    <!-- Department -->
+    <div class="stat-card">
+
+        <div class="stat-icon employee-icon">
+            <i class="fa-solid fa-building"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ employee.department.name if employee.department else '—' }}
+            </div>
+
+            <div class="stat-label">
+                Department
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Attendance -->
+    <div class="stat-card">
+
+        <div class="stat-icon attendance-icon">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ today_attendance.status|capitalize if today_attendance else 'Not marked' }}
+            </div>
+
+            <div class="stat-label">
+                Today's Attendance
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Pending Leaves -->
+    <div class="stat-card">
+
+        <div class="stat-icon leave-icon">
+            <i class="fa-solid fa-plane-departure"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ pending_leaves }}
+            </div>
+
+            <div class="stat-label">
+                Pending Leave Requests
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="card-flat">
-  <p class="mb-2">Quick actions:</p>
-  <a href="{{ url_for('employee.attendance') }}" class="btn btn-sm btn-outline-primary me-2">Mark attendance</a>
-  <a href="{{ url_for('employee.leave') }}" class="btn btn-sm btn-outline-primary">Apply for leave</a>
+
+<!-- Quick Actions -->
+<div class="dashboard-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Quick Actions</h2>
+            <p>Frequently used employee services</p>
+        </div>
+
+    </div>
+
+
+    <div class="quick-actions-grid">
+
+        <!-- Attendance -->
+        <a
+            href="{{ url_for('employee.attendance') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon attendance-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div>
+                <h3>Mark Attendance</h3>
+                <p>Record your attendance</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+        </a>
+
+
+        <!-- Leave -->
+        <a
+            href="{{ url_for('employee.leave') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon leave-icon">
+                <i class="fa-solid fa-plane-departure"></i>
+            </div>
+
+            <div>
+                <h3>Apply for Leave</h3>
+                <p>Submit a new leave request</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+        </a>
+
+
+        <!-- Profile -->
+        <a
+            href="{{ url_for('employee.profile') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon employee-icon">
+                <i class="fa-solid fa-id-card"></i>
+            </div>
+
+            <div>
+                <h3>My Profile</h3>
+                <p>View your employee details</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+        </a>
+
+
+        <!-- Salary -->
+        <a
+            href="{{ url_for('employee.salary') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon department-icon">
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+
+            <div>
+                <h3>My Salary</h3>
+                <p>View your salary information</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+        </a>
+
+    </div>
+
 </div>
+
 {% endblock %}

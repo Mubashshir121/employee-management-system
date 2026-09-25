@@ -1,19 +1,112 @@
 {% extends "base.html" %}
+
 {% block title %}My Profile{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>My profile</h1>
+
+<div class="dashboard-header">
+
+    <div>
+        <h1>My Profile</h1>
+        <p>View your personal and employment information</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-id-card"></i>
+        Employee Profile
+    </div>
+
 </div>
-<div class="card-flat" style="max-width: 520px;">
-  <table class="table table-borderless table-sm mb-0">
-    <tr><th style="width:160px;">Employee code</th><td>{{ employee.employee_code }}</td></tr>
-    <tr><th>Full name</th><td>{{ employee.full_name }}</td></tr>
-    <tr><th>Designation</th><td>{{ employee.designation or '—' }}</td></tr>
-    <tr><th>Department</th><td>{{ employee.department.name if employee.department else '—' }}</td></tr>
-    <tr><th>Phone</th><td>{{ employee.phone or '—' }}</td></tr>
-    <tr><th>Address</th><td>{{ employee.address or '—' }}</td></tr>
-    <tr><th>Date joined</th><td>{{ employee.date_joined }}</td></tr>
-    <tr><th>Email</th><td>{{ employee.user.email }}</td></tr>
-  </table>
+
+
+<div class="profile-layout">
+
+    <!-- Profile Header -->
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+            {{ employee.full_name[0] | upper }}
+        </div>
+
+        <h2>{{ employee.full_name }}</h2>
+
+        <p class="profile-designation">
+            {{ employee.designation or 'Employee' }}
+        </p>
+
+        <span class="profile-code">
+            {{ employee.employee_code }}
+        </span>
+
+    </div>
+
+
+    <!-- Employee Information -->
+    <div class="card-flat profile-details">
+
+        <div class="profile-section-title">
+            <i class="fa-solid fa-user"></i>
+            Personal Information
+        </div>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-item">
+                <span>Full Name</span>
+                <strong>{{ employee.full_name }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Email</span>
+                <strong>{{ employee.user.email }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Phone</span>
+                <strong>{{ employee.phone or '—' }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Address</span>
+                <strong>{{ employee.address or '—' }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="profile-section-title profile-employment-title">
+            <i class="fa-solid fa-briefcase"></i>
+            Employment Information
+        </div>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-item">
+                <span>Employee Code</span>
+                <strong>{{ employee.employee_code }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Designation</span>
+                <strong>{{ employee.designation or '—' }}</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Department</span>
+                <strong>
+                    {{ employee.department.name if employee.department else '—' }}
+                </strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Date Joined</span>
+                <strong>{{ employee.date_joined }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
 {% endblock %}

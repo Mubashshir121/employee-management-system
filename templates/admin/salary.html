@@ -1,65 +1,239 @@
 {% extends "base.html" %}
+
 {% block title %}Salary — {{ employee.full_name }}{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Salary — {{ employee.full_name }}</h1>
-  <a href="{{ url_for('admin.employees') }}" class="btn btn-sm btn-outline-secondary">Back to employees</a>
+
+<div class="dashboard-header">
+    <div>
+        <h1>Salary</h1>
+        <p>Manage salary records for {{ employee.full_name }}</p>
+    </div>
+
+    <a href="{{ url_for('admin.employees') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i>
+        Back to Employees
+    </a>
 </div>
 
-<div class="row">
-  <div class="col-md-5 mb-3">
+
+<div class="admin-salary-layout">
+
+    <!-- ADD / UPDATE SALARY -->
+
     <div class="card-flat">
-      <h2 class="h6 mb-3">Add / update record</h2>
-      <form method="post">
-        <div class="row">
-          <div class="col-6 mb-3">
-            <label class="form-label">Month</label>
-            <select class="form-select" name="month" required>
-              {% for m in range(1, 13) %}
-              <option value="{{ m }}">{{ m }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-6 mb-3">
-            <label class="form-label">Year</label>
-            <input type="number" class="form-control" name="year" value="2026" required>
-          </div>
+
+        <div class="section-header">
+            <div>
+                <h2>Add / Update Salary</h2>
+                <p>Enter monthly salary information</p>
+            </div>
+
+            <div class="salary-form-icon">
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Basic</label>
-          <input type="number" step="0.01" class="form-control" name="basic" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Allowances</label>
-          <input type="number" step="0.01" class="form-control" name="allowances" value="0">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Deductions</label>
-          <input type="number" step="0.01" class="form-control" name="deductions" value="0">
-        </div>
-        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-      </form>
+
+
+        <form method="post">
+
+            <div class="row">
+
+                <div class="col-6 mb-3">
+
+                    <label class="form-label">Month</label>
+
+                    <select
+                        class="form-select"
+                        name="month"
+                        required
+                    >
+                        {% for m in range(1, 13) %}
+                        <option value="{{ m }}">{{ m }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+                <div class="col-6 mb-3">
+
+                    <label class="form-label">Year</label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        name="year"
+                        value="2026"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">Basic Salary</label>
+
+                <div class="salary-input-wrapper">
+                    <span>₹</span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        name="basic"
+                        placeholder="0.00"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">Allowances</label>
+
+                <div class="salary-input-wrapper">
+                    <span>₹</span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        name="allowances"
+                        value="0"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">Deductions</label>
+
+                <div class="salary-input-wrapper">
+                    <span>₹</span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        name="deductions"
+                        value="0"
+                    >
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-check me-1"></i>
+                Save Salary
+            </button>
+
+        </form>
+
     </div>
-  </div>
-  <div class="col-md-7">
+
+
+    <!-- SALARY HISTORY -->
+
     <div class="card-flat">
-      <table class="table table-sm align-middle mb-0">
-        <thead><tr><th>Month/Year</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th></tr></thead>
-        <tbody>
-          {% for r in records %}
-          <tr>
-            <td>{{ r.month }}/{{ r.year }}</td>
-            <td>{{ r.basic }}</td>
-            <td>{{ r.allowances }}</td>
-            <td>{{ r.deductions }}</td>
-            <td><strong>{{ r.net_salary }}</strong></td>
-          </tr>
-          {% else %}
-          <tr><td colspan="5" class="text-muted text-center py-3">No salary records yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+        <div class="section-header">
+            <div>
+                <h2>Salary History</h2>
+                <p>Monthly salary records</p>
+            </div>
+
+            <div class="salary-count">
+                {{ records|length }} Records
+            </div>
+        </div>
+
+
+        {% if records %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Month / Year</th>
+                        <th>Basic</th>
+                        <th>Allowances</th>
+                        <th>Deductions</th>
+                        <th>Net Salary</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for r in records %}
+
+                    <tr>
+
+                        <td>
+                            <div class="salary-month">
+                                <div class="salary-icon">
+                                    <i class="fa-solid fa-calendar"></i>
+                                </div>
+
+                                <strong>
+                                    {{ r.month }}/{{ r.year }}
+                                </strong>
+                            </div>
+                        </td>
+
+                        <td>
+                            ₹{{ r.basic }}
+                        </td>
+
+                        <td class="salary-positive">
+                            + ₹{{ r.allowances }}
+                        </td>
+
+                        <td class="salary-negative">
+                            - ₹{{ r.deductions }}
+                        </td>
+
+                        <td>
+                            <strong class="net-salary">
+                                ₹{{ r.net_salary }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fa-solid fa-money-bill-wave"></i>
+
+            <h3>No Salary Records</h3>
+
+            <p>
+                No salary records have been added for this employee yet.
+            </p>
+
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
+
 </div>
+
 {% endblock %}

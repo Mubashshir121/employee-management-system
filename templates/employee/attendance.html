@@ -1,26 +1,101 @@
 {% extends "base.html" %}
+
 {% block title %}My Attendance{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>My attendance</h1>
-  <form method="post">
-    <button type="submit" class="btn btn-primary btn-sm">Mark today present</button>
-  </form>
+
+<div class="dashboard-header">
+
+    <div>
+        <h1>My Attendance</h1>
+        <p>View your attendance history and mark today's attendance</p>
+    </div>
+
+    <form method="post">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-calendar-check me-1"></i>
+            Mark Today Present
+        </button>
+    </form>
+
 </div>
 
+
 <div class="card-flat">
-  <table class="table table-sm align-middle mb-0">
-    <thead><tr><th>Date</th><th>Status</th></tr></thead>
-    <tbody>
-      {% for r in records %}
-      <tr>
-        <td>{{ r.date }}</td>
-        <td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="2" class="text-muted text-center py-3">No attendance history yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+    <div class="section-header attendance-section-header">
+
+        <div>
+            <h2>Attendance History</h2>
+            <p>Your recorded attendance</p>
+        </div>
+
+        <div class="attendance-count">
+            {{ records|length }} Records
+        </div>
+
+    </div>
+
+
+    {% if records %}
+
+    <div class="table-responsive">
+
+        <table class="table align-middle mb-0">
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for r in records %}
+
+                <tr>
+
+                    <td>
+                        <div class="attendance-date">
+                            <div class="attendance-date-icon">
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+
+                            <strong>{{ r.date }}</strong>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="badge rounded-pill badge-status-{{ r.status }}">
+                            {{ r.status | capitalize }}
+                        </span>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="fa-regular fa-calendar-xmark"></i>
+
+        <h3>No Attendance History</h3>
+
+        <p>Your attendance records will appear here.</p>
+
+    </div>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}

@@ -1,44 +1,583 @@
 {% extends "base.html" %}
+
 {% block title %}Reports{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Reports</h1>
+
+<div class="dashboard-header">
+    <div>
+        <h1>Reports & Analytics</h1>
+        <p>Real-time overview of employees, attendance, leave, and salary</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-chart-simple"></i>
+        Management Reports
+    </div>
 </div>
 
-<div class="row">
-  <div class="col-md-6 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Employees by department</h2>
-      <table class="table table-sm mb-0">
-        <tbody>
-          {% for name, count in dept_counts %}
-          <tr><td>{{ name }}</td><td class="text-end">{{ count }}</td></tr>
-          {% else %}
-          <tr><td class="text-muted">No departments yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+<div class="reports-grid">
+
+    <!-- Employees by Department -->
+    <div class="card-flat report-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Employees by Department</h2>
+                <p>Employee distribution across departments</p>
+            </div>
+
+            <div class="report-icon department-report-icon">
+                <i class="fa-solid fa-building"></i>
+            </div>
+        </div>
+
+        {% if dept_counts %}
+
+        <div class="report-chart">
+            <canvas id="departmentChart"></canvas>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <i class="fa-solid fa-building"></i>
+            <h3>No Departments</h3>
+            <p>No department data is available.</p>
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
-  <div class="col-md-6 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Leave requests by status</h2>
-      <table class="table table-sm mb-0">
-        <tbody>
-          {% for status, count in leave_counts %}
-          <tr><td><span class="badge badge-status-{{ status }}">{{ status }}</span></td><td class="text-end">{{ count }}</td></tr>
-          {% else %}
-          <tr><td class="text-muted">No leave requests yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+
+    <!-- Leave Status -->
+    <div class="card-flat report-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Leave Status</h2>
+                <p>Distribution of leave requests</p>
+            </div>
+
+            <div class="report-icon leave-report-icon">
+                <i class="fa-solid fa-plane-departure"></i>
+            </div>
+        </div>
+
+        {% if leave_counts %}
+
+        <div class="report-chart report-chart-small">
+            <canvas id="leaveChart"></canvas>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <i class="fa-regular fa-calendar-xmark"></i>
+            <h3>No Leave Requests</h3>
+            <p>No leave request data is available.</p>
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
-  <div class="col-md-6">
-    <div class="stat-card">
-      <div class="stat-value">{{ total_net_salary }}</div>
-      <div class="stat-label">Total net salary paid (all records)</div>
+
+
+    <!-- Attendance Status -->
+    <div class="card-flat report-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Attendance Status</h2>
+                <p>Overall attendance distribution</p>
+            </div>
+
+            <div class="report-icon attendance-report-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+        </div>
+
+        {% if attendance_counts %}
+
+        <div class="report-chart report-chart-small">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark"></i>
+            <h3>No Attendance Data</h3>
+            <p>No attendance records are available.</p>
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
+
+
+    <!-- Monthly Attendance -->
+    <div class="card-flat report-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Monthly Attendance</h2>
+                <p>Total attendance records by month</p>
+            </div>
+
+            <div class="report-icon attendance-report-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+        </div>
+
+        {% if monthly_attendance %}
+
+        <div class="report-chart">
+            <canvas id="monthlyAttendanceChart"></canvas>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark"></i>
+            <h3>No Monthly Attendance</h3>
+            <p>No monthly attendance data is available.</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Total Salary -->
+    <div class="stat-card salary-report-card">
+
+        <div class="stat-icon salary-report-icon">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                ₹{{ "%.2f"|format(total_net_salary or 0) }}
+            </div>
+
+            <div class="stat-label">
+                Total Net Salary
+            </div>
+
+            <small class="salary-report-note">
+                Across all salary records
+            </small>
+
+        </div>
+
+    </div>
+
 </div>
+
+
+<!--
+    Hidden chart data.
+
+    Jinja is kept in HTML instead of JavaScript so that
+    VS Code does not report JavaScript syntax errors.
+-->
+
+<div id="departmentChartData" hidden>
+    {% for name, count in dept_counts %}
+        <span
+            data-label="{{ name }}"
+            data-value="{{ count }}"
+        ></span>
+    {% endfor %}
+</div>
+
+
+<div id="leaveChartData" hidden>
+    {% for status, count in leave_counts %}
+        <span
+            data-label="{{ status }}"
+            data-value="{{ count }}"
+        ></span>
+    {% endfor %}
+</div>
+
+
+<div id="attendanceChartData" hidden>
+    {% for status, count in attendance_counts %}
+        <span
+            data-label="{{ status }}"
+            data-value="{{ count }}"
+        ></span>
+    {% endfor %}
+</div>
+
+
+<div id="monthlyAttendanceChartData" hidden>
+    {% for month, count in monthly_attendance %}
+        <span
+            data-label="{{ month }}"
+            data-value="{{ count }}"
+        ></span>
+    {% endfor %}
+</div>
+
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    /* =========================================
+       Theme Helpers
+    ========================================= */
+
+    function isDarkMode() {
+        return document.documentElement.classList.contains("dark-mode");
+    }
+
+
+    function chartTextColor() {
+        return isDarkMode() ? "#f1f5f9" : "#334155";
+    }
+
+
+    function chartGridColor() {
+        return isDarkMode() ? "#334155" : "#e2e8f0";
+    }
+
+
+    function chartLegendColor() {
+        return isDarkMode() ? "#f1f5f9" : "#334155";
+    }
+
+
+    /* =========================================
+       Read Data From HTML
+    ========================================= */
+
+    function getChartData(containerId) {
+
+        const container = document.getElementById(containerId);
+
+        if (!container) {
+            return {
+                labels: [],
+                values: []
+            };
+        }
+
+        const items = container.querySelectorAll("span");
+
+        const labels = [];
+        const values = [];
+
+        items.forEach(function (item) {
+
+            labels.push(item.dataset.label);
+
+            values.push(Number(item.dataset.value));
+
+        });
+
+        return {
+            labels: labels,
+            values: values
+        };
+    }
+
+
+    /* =========================================
+       Employees By Department
+    ========================================= */
+
+    const departmentChartData =
+        getChartData("departmentChartData");
+
+
+    if (document.getElementById("departmentChart")) {
+
+        new Chart(
+            document.getElementById("departmentChart"),
+            {
+                type: "bar",
+
+                data: {
+                    labels: departmentChartData.labels,
+
+                    datasets: [{
+                        label: "Employees",
+                        data: departmentChartData.values,
+                        borderWidth: 1
+                    }]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+                                color: chartTextColor()
+                            },
+
+                            grid: {
+                                color: chartGridColor()
+                            }
+
+                        },
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0,
+                                color: chartTextColor()
+                            },
+
+                            grid: {
+                                color: chartGridColor()
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       Leave Status
+    ========================================= */
+
+    const leaveChartData =
+        getChartData("leaveChartData");
+
+
+    const leaveLabels = leaveChartData.labels.map(
+        function (status) {
+            return status.charAt(0).toUpperCase() + status.slice(1);
+        }
+    );
+
+
+    if (document.getElementById("leaveChart")) {
+
+        new Chart(
+            document.getElementById("leaveChart"),
+            {
+                type: "doughnut",
+
+                data: {
+
+                    labels: leaveLabels,
+
+                    datasets: [{
+                        data: leaveChartData.values,
+                        borderWidth: 2
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom",
+
+                            labels: {
+                                color: chartLegendColor()
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       Attendance Status
+    ========================================= */
+
+    const attendanceChartData =
+        getChartData("attendanceChartData");
+
+
+    const attendanceLabels = attendanceChartData.labels.map(
+        function (status) {
+            return status.charAt(0).toUpperCase() + status.slice(1);
+        }
+    );
+
+
+    if (document.getElementById("attendanceChart")) {
+
+        new Chart(
+            document.getElementById("attendanceChart"),
+            {
+                type: "doughnut",
+
+                data: {
+
+                    labels: attendanceLabels,
+
+                    datasets: [{
+                        data: attendanceChartData.values,
+                        borderWidth: 2
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom",
+
+                            labels: {
+                                color: chartLegendColor()
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       Monthly Attendance
+    ========================================= */
+
+    const monthlyAttendanceChartData =
+        getChartData("monthlyAttendanceChartData");
+
+
+    if (document.getElementById("monthlyAttendanceChart")) {
+
+        new Chart(
+            document.getElementById("monthlyAttendanceChart"),
+            {
+                type: "line",
+
+                data: {
+
+                    labels: monthlyAttendanceChartData.labels,
+
+                    datasets: [{
+                        label: "Attendance Records",
+                        data: monthlyAttendanceChartData.values,
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: false
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true,
+
+                            labels: {
+                                color: chartLegendColor()
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+                                color: chartTextColor()
+                            },
+
+                            grid: {
+                                color: chartGridColor()
+                            }
+
+                        },
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0,
+                                color: chartTextColor()
+                            },
+
+                            grid: {
+                                color: chartGridColor()
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
 {% endblock %}

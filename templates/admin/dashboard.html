@@ -1,47 +1,409 @@
 {% extends "base.html" %}
+
 {% block title %}Admin Dashboard{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Dashboard</h1>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+
+    <div>
+        <h1>Dashboard</h1>
+        <p>Overview of your employee management system</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-regular fa-calendar"></i>
+        Admin Panel
+    </div>
+
 </div>
 
+
+<!-- Statistics -->
 <div class="stat-grid">
-  <div class="stat-card">
-    <div class="stat-value">{{ stats.employee_count }}</div>
-    <div class="stat-label">Total employees</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ stats.department_count }}</div>
-    <div class="stat-label">Departments</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ stats.present_today }}</div>
-    <div class="stat-label">Present today</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">{{ stats.pending_leaves }}</div>
-    <div class="stat-label">Pending leave requests</div>
-  </div>
+
+    <!-- Employees -->
+    <div class="stat-card">
+
+        <div class="stat-icon employee-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ stats.employee_count }}
+            </div>
+
+            <div class="stat-label">
+                Total Employees
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Departments -->
+    <div class="stat-card">
+
+        <div class="stat-icon department-icon">
+            <i class="fa-solid fa-building"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ stats.department_count }}
+            </div>
+
+            <div class="stat-label">
+                Departments
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Present Today -->
+    <div class="stat-card">
+
+        <div class="stat-icon attendance-icon">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ stats.present_today }}
+            </div>
+
+            <div class="stat-label">
+                Present Today
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Pending Leaves -->
+    <div class="stat-card">
+
+        <div class="stat-icon leave-icon">
+            <i class="fa-solid fa-plane-departure"></i>
+        </div>
+
+        <div class="stat-info">
+
+            <div class="stat-value">
+                {{ stats.pending_leaves }}
+            </div>
+
+            <div class="stat-label">
+                Pending Leaves
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="card-flat">
-  <h2 class="h6 mb-3">Recent leave requests</h2>
-  {% if recent_leaves %}
-  <table class="table table-sm align-middle mb-0">
-    <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
-    <tbody>
-      {% for l in recent_leaves %}
-      <tr>
-        <td>{{ l.employee.full_name }}</td>
-        <td>{{ l.leave_type }}</td>
-        <td>{{ l.start_date }} – {{ l.end_date }}</td>
-        <td><span class="badge badge-status-{{ l.status }}">{{ l.status }}</span></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="text-muted mb-0">No leave requests yet.</p>
-  {% endif %}
+
+<!-- Quick Actions -->
+<div class="dashboard-section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>Quick Actions</h2>
+            <p>Common administrator tasks</p>
+        </div>
+
+    </div>
+
+
+    <div class="quick-actions-grid">
+
+        <!-- Add Employee -->
+        <a
+            href="{{ url_for('admin.add_employee') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+
+            <div>
+                <strong>Add Employee</strong>
+                <span>Create a new employee record</span>
+            </div>
+
+            <i class="fa-solid fa-chevron-right quick-action-arrow"></i>
+
+        </a>
+
+
+        <!-- Attendance -->
+        <a
+            href="{{ url_for('admin.attendance') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div>
+                <strong>Manage Attendance</strong>
+                <span>Record employee attendance</span>
+            </div>
+
+            <i class="fa-solid fa-chevron-right quick-action-arrow"></i>
+
+        </a>
+
+
+        <!-- Leave Requests -->
+        <a
+            href="{{ url_for('admin.leaves') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon">
+                <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+
+            <div>
+                <strong>Leave Requests</strong>
+                <span>Review employee leave applications</span>
+            </div>
+
+            <i class="fa-solid fa-chevron-right quick-action-arrow"></i>
+
+        </a>
+
+
+        <!-- Reports -->
+        <a
+            href="{{ url_for('admin.reports') }}"
+            class="quick-action-card"
+        >
+
+            <div class="quick-action-icon">
+                <i class="fa-solid fa-chart-column"></i>
+            </div>
+
+            <div>
+                <strong>View Reports</strong>
+                <span>Analyze employee records</span>
+            </div>
+
+            <i class="fa-solid fa-chevron-right quick-action-arrow"></i>
+
+        </a>
+
+    </div>
+
 </div>
+
+
+<!-- Recent Leave Requests -->
+<div class="dashboard-section">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>Recent Leave Requests</h2>
+
+            <p>
+                Latest employee leave applications
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('admin.leaves') }}"
+            class="btn btn-outline-primary"
+        >
+            <i class="fa-solid fa-arrow-right me-1"></i>
+            View All
+        </a>
+
+    </div>
+
+
+    <div class="card-flat">
+
+        {% if recent_leaves %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee</th>
+
+                        <th>Leave Type</th>
+
+                        <th>Dates</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for l in recent_leaves %}
+
+                    <tr>
+
+                        <!-- Employee -->
+                        <td>
+
+                            <div class="employee-cell">
+
+                                <div class="employee-avatar">
+                                    {{ l.employee.full_name[0] | upper }}
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ l.employee.full_name }}
+                                    </strong>
+
+                                    <small class="employee-code">
+                                        {{ l.employee.employee_code }}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Leave Type -->
+                        <td>
+
+                            <span class="leave-type-label">
+                                <i class="fa-solid fa-file-lines me-1"></i>
+                                {{ l.leave_type }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Dates -->
+                        <td>
+
+                            <span class="date-range">
+
+                                <i class="fa-regular fa-calendar me-1"></i>
+
+                                {{ l.start_date }}
+                                –
+                                {{ l.end_date }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td>
+
+                            {% if l.status == "pending" %}
+
+                                <span class="badge rounded-pill badge-status-pending">
+
+                                    <i class="fa-solid fa-clock me-1"></i>
+
+                                    Pending
+
+                                </span>
+
+                            {% elif l.status == "approved" %}
+
+                                <span class="badge rounded-pill badge-status-approved">
+
+                                    <i class="fa-solid fa-circle-check me-1"></i>
+
+                                    Approved
+
+                                </span>
+
+                            {% elif l.status == "rejected" %}
+
+                                <span class="badge rounded-pill badge-status-rejected">
+
+                                    <i class="fa-solid fa-circle-xmark me-1"></i>
+
+                                    Rejected
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge rounded-pill">
+
+                                    {{ l.status | capitalize }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fa-regular fa-calendar-xmark"></i>
+
+            <h3>No Leave Requests</h3>
+
+            <p>
+                There are no leave requests at the moment.
+            </p>
+
+            <a
+                href="{{ url_for('admin.leaves') }}"
+                class="btn btn-primary btn-sm"
+            >
+                <i class="fa-solid fa-file-lines me-1"></i>
+                View Leave Requests
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
 {% endblock %}

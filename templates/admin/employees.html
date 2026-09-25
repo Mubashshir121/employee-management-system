@@ -1,36 +1,358 @@
 {% extends "base.html" %}
+
 {% block title %}Employees{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Employees</h1>
-  <a href="{{ url_for('admin.add_employee') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus me-1"></i>Add employee</a>
+
+<!-- Page Header -->
+<div class="dashboard-header">
+
+    <div>
+        <h1>Employees</h1>
+        <p>Manage employee information and records</p>
+    </div>
+
+    <a
+        href="{{ url_for('admin.add_employee') }}"
+        class="btn btn-primary"
+    >
+        <i class="fa-solid fa-plus me-1"></i>
+        Add Employee
+    </a>
+
 </div>
 
-<div class="card-flat">
-  <table class="table table-hover align-middle mb-0">
-    <thead>
-      <tr><th>Code</th><th>Name</th><th>Department</th><th>Designation</th><th>Joined</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for e in employees %}
-      <tr>
-        <td>{{ e.employee_code }}</td>
-        <td>{{ e.full_name }}</td>
-        <td>{{ e.department.name if e.department else '—' }}</td>
-        <td>{{ e.designation or '—' }}</td>
-        <td>{{ e.date_joined }}</td>
-        <td class="text-end">
-          <a href="{{ url_for('admin.salary', employee_id=e.id) }}" class="btn btn-sm btn-outline-secondary">Salary</a>
-          <a href="{{ url_for('admin.edit_employee', employee_id=e.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-          <form action="{{ url_for('admin.delete_employee', employee_id=e.id) }}" method="post" class="d-inline" onsubmit="return confirm('Delete this employee?');">
-            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6" class="text-muted text-center py-3">No employees yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<!-- Search & Filter -->
+<div class="card-flat employee-filter-card">
+
+    <div class="employee-filter-grid">
+
+        <!-- Search -->
+        <div class="employee-search-box">
+
+            <label for="employeeSearch" class="form-label">
+                <i class="fa-solid fa-magnifying-glass me-1"></i>
+                Search Employees
+            </label>
+
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+
+                <input
+                    type="text"
+                    id="employeeSearch"
+                    class="form-control"
+                    placeholder="Search by name, employee code or designation..."
+                    autocomplete="off"
+                >
+            </div>
+
+        </div>
+
+
+        <!-- Department Filter -->
+        <div>
+
+            <label for="departmentFilter" class="form-label">
+                <i class="fa-solid fa-building me-1"></i>
+                Department
+            </label>
+
+            <select
+                id="departmentFilter"
+                class="form-select"
+            >
+                <option value="">All Departments</option>
+
+                {% for department in departments %}
+                    <option value="{{ department.name | lower }}">
+                        {{ department.name }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+    </div>
+
 </div>
+
+
+<!-- Employee Table -->
+<div class="card-flat">
+
+    <div class="table-responsive">
+
+        <table class="table align-middle mb-0">
+
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Code</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Joined</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="employeeTableBody">
+
+                {% for e in employees %}
+
+                <tr class="employee-row">
+
+                    <!-- Employee -->
+                    <td>
+                        <div class="employee-cell">
+
+                            <div class="employee-avatar">
+                                {{ e.full_name[0] | upper }}
+                            </div>
+
+                            <div>
+                                <strong>{{ e.full_name }}</strong>
+                            </div>
+
+                        </div>
+                    </td>
+
+
+                    <!-- Employee Code -->
+                    <td>
+                        <span class="employee-code">
+                            {{ e.employee_code }}
+                        </span>
+                    </td>
+
+
+                    <!-- Department -->
+                    <td>
+
+                        {% if e.department %}
+
+                            <span class="employee-department">
+                                {{ e.department.name }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">—</span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- Designation -->
+                    <td>
+                        {{ e.designation or '—' }}
+                    </td>
+
+
+                    <!-- Joining Date -->
+                    <td>
+                        {{ e.date_joined }}
+                    </td>
+
+
+                    <!-- Actions -->
+                    <td class="text-end">
+
+                        <div class="employee-actions">
+
+                            <!-- Salary -->
+                            <a
+                                href="{{ url_for('admin.salary', employee_id=e.id) }}"
+                                class="action-btn"
+                                title="Salary"
+                                aria-label="View salary"
+                            >
+                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                            </a>
+
+
+                            <!-- Edit -->
+                            <a
+                                href="{{ url_for('admin.edit_employee', employee_id=e.id) }}"
+                                class="action-btn"
+                                title="Edit"
+                                aria-label="Edit employee"
+                            >
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+
+                            <!-- Delete -->
+                            <form
+                                action="{{ url_for('admin.delete_employee', employee_id=e.id) }}"
+                                method="post"
+                                class="d-inline"
+                                onsubmit="return confirm('Delete this employee?');"
+                            >
+                                <button
+                                    type="submit"
+                                    class="action-btn delete-action"
+                                    title="Delete"
+                                    aria-label="Delete employee"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="6">
+
+                        <div class="empty-state">
+
+                            <i class="fa-solid fa-users"></i>
+
+                            <h3>No Employees</h3>
+
+                            <p>There are no employees registered yet.</p>
+
+                            <a
+                                href="{{ url_for('admin.add_employee') }}"
+                                class="btn btn-primary btn-sm"
+                            >
+                                <i class="fa-solid fa-plus me-1"></i>
+                                Add Employee
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- No Search Results -->
+    <div
+        id="employeeNoResults"
+        class="empty-state"
+        style="display: none;"
+    >
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <h3>No Matching Employees</h3>
+
+        <p>
+            No employees match your search or department filter.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const employeeSearch =
+        document.getElementById("employeeSearch");
+
+    const departmentFilter =
+        document.getElementById("departmentFilter");
+
+    const employeeRows =
+        document.querySelectorAll(".employee-row");
+
+    const employeeNoResults =
+        document.getElementById("employeeNoResults");
+
+
+    function filterEmployees() {
+
+        const searchValue =
+            employeeSearch.value.trim().toLowerCase();
+
+        const departmentValue =
+            departmentFilter.value.toLowerCase();
+
+        let visibleCount = 0;
+
+
+        employeeRows.forEach(function(row) {
+
+            const rowText =
+                row.textContent.toLowerCase();
+
+            const departmentElement =
+                row.querySelector(".employee-department");
+
+            const departmentText =
+                departmentElement
+                    ? departmentElement.textContent.trim().toLowerCase()
+                    : "";
+
+
+            const matchesSearch =
+                rowText.includes(searchValue);
+
+            const matchesDepartment =
+                !departmentValue ||
+                departmentText === departmentValue;
+
+
+            if (matchesSearch && matchesDepartment) {
+
+                row.style.display = "";
+                visibleCount++;
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+
+        if (visibleCount === 0 && employeeRows.length > 0) {
+
+            employeeNoResults.style.display = "block";
+
+        } else {
+
+            employeeNoResults.style.display = "none";
+
+        }
+
+    }
+
+
+    employeeSearch.addEventListener(
+        "input",
+        filterEmployees
+    );
+
+    departmentFilter.addEventListener(
+        "change",
+        filterEmployees
+    );
+
+</script>
+
 {% endblock %}

@@ -1,49 +1,186 @@
 {% extends "base.html" %}
+
 {% block title %}Departments{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Departments</h1>
+
+<div class="dashboard-header">
+    <div>
+        <h1>Departments</h1>
+        <p>Manage departments and view employee distribution</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-sitemap"></i>
+        Department Management
+    </div>
 </div>
 
-<div class="row">
-  <div class="col-md-5 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Add department</h2>
-      <form method="post">
-        <div class="mb-3">
-          <label class="form-label">Name</label>
-          <input type="text" class="form-control" name="name" required>
+
+<div class="department-layout">
+
+    <!-- Add Department -->
+    <div class="card-flat department-form-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Add Department</h2>
+                <p>Create a new department</p>
+            </div>
+
+            <div class="department-title-icon">
+                <i class="fa-solid fa-building"></i>
+            </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Description</label>
-          <input type="text" class="form-control" name="description">
+
+
+        <form method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Department Name</label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    placeholder="Enter department name"
+                    required
+                >
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="description"
+                    placeholder="Enter department description"
+                >
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-plus me-1"></i>
+                Add Department
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Department List -->
+    <div class="card-flat department-list-card">
+
+        <div class="section-header">
+            <div>
+                <h2>All Departments</h2>
+                <p>Current departments in the organization</p>
+            </div>
+
+            <div class="department-count">
+                {{ departments|length }} Departments
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-sm">Add</button>
-      </form>
+
+
+        {% if departments %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th>Employees</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for d in departments %}
+
+                    <tr>
+
+                        <td>
+                            <div class="department-name">
+
+                                <div class="department-icon-small">
+                                    <i class="fa-solid fa-building"></i>
+                                </div>
+
+                                <strong>{{ d.name }}</strong>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+                            <span class="department-description">
+                                {{ d.description or '—' }}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            <span class="employee-count">
+                                <i class="fa-solid fa-users"></i>
+                                {{ d.employees|length }}
+                            </span>
+                        </td>
+
+
+                        <td class="text-end">
+
+                            <form
+                                action="{{ url_for('admin.delete_department', department_id=d.id) }}"
+                                method="post"
+                                onsubmit="return confirm('Delete this department?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-light action-btn delete-action"
+                                    title="Delete department"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fa-solid fa-building"></i>
+
+            <h3>No Departments</h3>
+
+            <p>There are no departments created yet.</p>
+
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
-  <div class="col-md-7">
-    <div class="card-flat">
-      <table class="table table-sm align-middle mb-0">
-        <thead><tr><th>Name</th><th>Description</th><th>Employees</th><th></th></tr></thead>
-        <tbody>
-          {% for d in departments %}
-          <tr>
-            <td>{{ d.name }}</td>
-            <td>{{ d.description or '—' }}</td>
-            <td>{{ d.employees|length }}</td>
-            <td class="text-end">
-              <form action="{{ url_for('admin.delete_department', department_id=d.id) }}" method="post" onsubmit="return confirm('Delete this department?');">
-                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
-          {% else %}
-          <tr><td colspan="4" class="text-muted text-center py-3">No departments yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+
 </div>
+
 {% endblock %}

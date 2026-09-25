@@ -1,25 +1,108 @@
 {% extends "base.html" %}
+
 {% block title %}My Salary{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>My salary</h1>
+
+<div class="dashboard-header">
+    <div>
+        <h1>My Salary</h1>
+        <p>View your monthly salary details</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        Salary Information
+    </div>
 </div>
+
+
 <div class="card-flat">
-  <table class="table table-sm align-middle mb-0">
-    <thead><tr><th>Month/Year</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th></tr></thead>
-    <tbody>
-      {% for r in records %}
-      <tr>
-        <td>{{ r.month }}/{{ r.year }}</td>
-        <td>{{ r.basic }}</td>
-        <td>{{ r.allowances }}</td>
-        <td>{{ r.deductions }}</td>
-        <td><strong>{{ r.net_salary }}</strong></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="5" class="text-muted text-center py-3">No salary records yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+    <div class="section-header">
+        <div>
+            <h2>Salary History</h2>
+            <p>Your monthly salary records</p>
+        </div>
+
+        <div class="salary-count">
+            {{ records|length }} Records
+        </div>
+    </div>
+
+
+    {% if records %}
+
+    <div class="table-responsive">
+
+        <table class="table align-middle mb-0">
+
+            <thead>
+                <tr>
+                    <th>Month / Year</th>
+                    <th>Basic</th>
+                    <th>Allowances</th>
+                    <th>Deductions</th>
+                    <th>Net Salary</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for r in records %}
+
+                <tr>
+
+                    <td>
+                        <div class="salary-month">
+                            <div class="salary-icon">
+                                <i class="fa-solid fa-calendar"></i>
+                            </div>
+
+                            <strong>{{ r.month }}/{{ r.year }}</strong>
+                        </div>
+                    </td>
+
+                    <td>{{ r.basic }}</td>
+
+                    <td class="salary-positive">
+                        + {{ r.allowances }}
+                    </td>
+
+                    <td class="salary-negative">
+                        - {{ r.deductions }}
+                    </td>
+
+                    <td>
+                        <strong class="net-salary">
+                            {{ r.net_salary }}
+                        </strong>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="fa-solid fa-money-bill-wave"></i>
+
+        <h3>No Salary Records</h3>
+
+        <p>Your salary records will appear here.</p>
+
+    </div>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}

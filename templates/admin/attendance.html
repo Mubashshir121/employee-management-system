@@ -1,56 +1,458 @@
 {% extends "base.html" %}
+
 {% block title %}Attendance{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Attendance</h1>
-  <form method="get" class="d-flex gap-2">
-    <input type="date" class="form-control form-control-sm" name="date" value="{{ selected_date }}" onchange="this.form.submit()">
-  </form>
+
+<!-- Page Header -->
+<div class="dashboard-header">
+
+    <div>
+        <h1>Attendance</h1>
+        <p>View and manage employee attendance</p>
+    </div>
+
+    <form method="get" class="attendance-date-filter">
+
+        <i class="fa-regular fa-calendar"></i>
+
+        <input
+            type="date"
+            class="form-control"
+            name="date"
+            value="{{ selected_date }}"
+            onchange="this.form.submit()"
+            title="Select attendance date"
+        >
+
+    </form>
+
 </div>
 
-<div class="row">
-  <div class="col-md-7 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Marked — {{ selected_date }}</h2>
-      <table class="table table-sm align-middle mb-0">
-        <thead><tr><th>Employee</th><th>Status</th></tr></thead>
-        <tbody>
-          {% for r in records %}
-          <tr>
-            <td>{{ r.employee.full_name }}</td>
-            <td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td>
-          </tr>
-          {% else %}
-          <tr><td colspan="2" class="text-muted text-center py-3">No attendance marked yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-5 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Mark attendance</h2>
-      <form method="post" action="{{ url_for('admin.mark_attendance') }}">
-        <input type="hidden" name="date" value="{{ selected_date }}">
-        <div class="mb-3">
-          <label class="form-label">Employee</label>
-          <select class="form-select" name="employee_id" required>
-            {% for e in unmarked %}
-            <option value="{{ e.id }}">{{ e.full_name }}</option>
-            {% endfor %}
-          </select>
+
+<!-- Attendance Summary -->
+<div class="attendance-summary-grid">
+
+    <div class="attendance-summary-card">
+
+        <div class="attendance-summary-icon present-icon">
+            <i class="fa-solid fa-circle-check"></i>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Status</label>
-          <select class="form-select" name="status">
-            <option value="present">Present</option>
-            <option value="absent">Absent</option>
-            <option value="leave">On leave</option>
-          </select>
+
+        <div>
+            <span>Present</span>
+            <strong>
+                {{ records | selectattr("status", "equalto", "present") | list | length }}
+            </strong>
         </div>
-        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-      </form>
+
     </div>
-  </div>
+
+
+    <div class="attendance-summary-card">
+
+        <div class="attendance-summary-icon absent-icon">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+
+        <div>
+            <span>Absent</span>
+            <strong>
+                {{ records | selectattr("status", "equalto", "absent") | list | length }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div class="attendance-summary-card">
+
+        <div class="attendance-summary-icon leave-icon">
+            <i class="fa-solid fa-calendar-minus"></i>
+        </div>
+
+        <div>
+            <span>On Leave</span>
+            <strong>
+                {{ records | selectattr("status", "equalto", "leave") | list | length }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div class="attendance-summary-card">
+
+        <div class="attendance-summary-icon unmarked-icon">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+
+        <div>
+            <span>Not Marked</span>
+            <strong>{{ unmarked | length }}</strong>
+        </div>
+
+    </div>
+
 </div>
+
+
+<!-- Main Attendance Layout -->
+<div class="admin-attendance-layout">
+
+
+    <!-- Attendance Records -->
+    <div class="card-flat">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>Attendance Records</h2>
+
+                <p>
+                    Attendance marked for {{ selected_date }}
+                </p>
+
+            </div>
+
+            <div class="attendance-count">
+                {{ records|length }} Records
+            </div>
+
+        </div>
+
+
+        {% if records %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee</th>
+
+                        <th>Department</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for r in records %}
+
+                    <tr>
+
+                        <!-- Employee -->
+                        <td>
+
+                            <div class="employee-cell">
+
+                                <div class="employee-avatar">
+                                    {{ r.employee.full_name[0] | upper }}
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ r.employee.full_name }}
+                                    </strong>
+
+                                    <small class="employee-code">
+                                        {{ r.employee.employee_code }}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Department -->
+                        <td>
+
+                            {% if r.employee.department %}
+
+                                {{ r.employee.department.name }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td>
+
+                            {% if r.status == "present" %}
+
+                                <span class="badge rounded-pill badge-status-present">
+                                    <i class="fa-solid fa-circle-check me-1"></i>
+                                    Present
+                                </span>
+
+                            {% elif r.status == "absent" %}
+
+                                <span class="badge rounded-pill badge-status-absent">
+                                    <i class="fa-solid fa-circle-xmark me-1"></i>
+                                    Absent
+                                </span>
+
+                            {% elif r.status == "leave" %}
+
+                                <span class="badge rounded-pill badge-status-leave">
+                                    <i class="fa-solid fa-calendar-minus me-1"></i>
+                                    On Leave
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge rounded-pill">
+                                    {{ r.status | capitalize }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fa-regular fa-calendar-xmark"></i>
+
+            <h3>No Attendance Marked</h3>
+
+            <p>
+                No attendance has been marked for {{ selected_date }}.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Mark Attendance -->
+    <div class="card-flat">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>Mark Attendance</h2>
+
+                <p>
+                    Record employee attendance
+                </p>
+
+            </div>
+
+            <div class="attendance-mark-icon">
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+            </div>
+
+        </div>
+
+
+        {% if unmarked %}
+
+        <form
+            method="post"
+            action="{{ url_for('admin.mark_attendance') }}"
+        >
+
+            <!-- Selected Date -->
+            <input
+                type="hidden"
+                name="date"
+                value="{{ selected_date }}"
+            >
+
+
+            <!-- Employee -->
+            <div class="mb-3">
+
+                <label class="form-label">
+                    <i class="fa-solid fa-user me-1"></i>
+                    Employee
+                </label>
+
+                <select
+                    class="form-select"
+                    name="employee_id"
+                    required
+                >
+
+                    <option value="" disabled selected>
+                        Select employee
+                    </option>
+
+                    {% for e in unmarked %}
+
+                    <option value="{{ e.id }}">
+
+                        {{ e.full_name }}
+
+                        {% if e.department %}
+                            — {{ e.department.name }}
+                        {% endif %}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- Attendance Status -->
+<div class="mb-3">
+
+    <label class="form-label">
+        <i class="fa-solid fa-clipboard-check me-1"></i>
+        Attendance Status
+    </label>
+
+    <div class="attendance-status-options">
+
+        <!-- Present -->
+        <input
+            type="radio"
+            name="status"
+            value="present"
+            id="statusPresent"
+            checked
+        >
+
+        <label
+            for="statusPresent"
+            class="attendance-status-option status-present"
+        >
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span>
+                <strong>Present</strong>
+                <small>Employee is present</small>
+            </span>
+
+        </label>
+
+
+        <!-- Absent -->
+        <input
+            type="radio"
+            name="status"
+            value="absent"
+            id="statusAbsent"
+        >
+
+        <label
+            for="statusAbsent"
+            class="attendance-status-option status-absent"
+        >
+
+            <i class="fa-solid fa-circle-xmark"></i>
+
+            <span>
+                <strong>Absent</strong>
+                <small>Employee is absent</small>
+            </span>
+
+        </label>
+
+
+        <!-- On Leave -->
+        <input
+            type="radio"
+            name="status"
+            value="leave"
+            id="statusLeave"
+        >
+
+        <label
+            for="statusLeave"
+            class="attendance-status-option status-leave"
+        >
+
+            <i class="fa-solid fa-calendar-minus"></i>
+
+            <span>
+                <strong>On Leave</strong>
+                <small>Employee is on leave</small>
+            </span>
+
+        </label>
+
+    </div>
+
+</div>
+
+
+            <!-- Save -->
+            <button
+                type="submit"
+                class="btn btn-primary w-100"
+            >
+
+                <i class="fa-solid fa-check me-1"></i>
+
+                Save Attendance
+
+            </button>
+
+        </form>
+
+
+        {% else %}
+
+        <div class="empty-state attendance-complete-state">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <h3>Attendance Complete</h3>
+
+            <p>
+                Attendance has been marked for all employees
+                on {{ selected_date }}.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
 {% endblock %}

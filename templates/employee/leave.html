@@ -1,60 +1,181 @@
 {% extends "base.html" %}
+
 {% block title %}Leave{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Leave</h1>
+
+<div class="dashboard-header">
+    <div>
+        <h1>Leave</h1>
+        <p>Apply for leave and track your leave requests</p>
+    </div>
+
+    <div class="dashboard-date">
+        <i class="fa-solid fa-plane-departure"></i>
+        Leave Management
+    </div>
 </div>
 
-<div class="row">
-  <div class="col-md-5 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">Apply for leave</h2>
-      <form method="post">
-        <div class="mb-3">
-          <label class="form-label">Leave type</label>
-          <select class="form-select" name="leave_type" required>
-            <option value="Casual">Casual</option>
-            <option value="Sick">Sick</option>
-            <option value="Earned">Earned</option>
-            <option value="Unpaid">Unpaid</option>
-          </select>
+
+<div class="leave-layout">
+
+    <!-- Apply for Leave -->
+    <div class="card-flat leave-form-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Apply for Leave</h2>
+                <p>Submit a new leave request</p>
+            </div>
+
+            <div class="leave-title-icon">
+                <i class="fa-solid fa-file-circle-plus"></i>
+            </div>
         </div>
-        <div class="row">
-          <div class="col-6 mb-3">
-            <label class="form-label">Start date</label>
-            <input type="date" class="form-control" name="start_date" required>
-          </div>
-          <div class="col-6 mb-3">
-            <label class="form-label">End date</label>
-            <input type="date" class="form-control" name="end_date" required>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Reason</label>
-          <textarea class="form-control" name="reason" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary btn-sm">Submit request</button>
-      </form>
+
+        <form method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Leave Type</label>
+
+                <select class="form-select" name="leave_type" required>
+                    <option value="Casual">Casual</option>
+                    <option value="Sick">Sick</option>
+                    <option value="Earned">Earned</option>
+                    <option value="Unpaid">Unpaid</option>
+                </select>
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Start Date</label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        name="start_date"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">End Date</label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        name="end_date"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Reason</label>
+
+                <textarea
+                    class="form-control"
+                    name="reason"
+                    rows="4"
+                    placeholder="Enter the reason for your leave..."
+                ></textarea>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane me-1"></i>
+                Submit Request
+            </button>
+
+        </form>
+
     </div>
-  </div>
-  <div class="col-md-7 mb-3">
-    <div class="card-flat">
-      <h2 class="h6 mb-3">My leave history</h2>
-      <table class="table table-sm align-middle mb-0">
-        <thead><tr><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
-        <tbody>
-          {% for l in leave_history %}
-          <tr>
-            <td>{{ l.leave_type }}</td>
-            <td>{{ l.start_date }} – {{ l.end_date }}</td>
-            <td><span class="badge badge-status-{{ l.status }}">{{ l.status }}</span></td>
-          </tr>
-          {% else %}
-          <tr><td colspan="3" class="text-muted text-center py-3">No leave requests yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+
+
+    <!-- Leave History -->
+    <div class="card-flat leave-history-card">
+
+        <div class="section-header">
+            <div>
+                <h2>My Leave History</h2>
+                <p>Track your previous leave requests</p>
+            </div>
+
+            <div class="leave-count">
+                {{ leave_history|length }} Requests
+            </div>
+        </div>
+
+
+        {% if leave_history %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Dates</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for l in leave_history %}
+
+                    <tr>
+
+                        <td>
+                            <span class="leave-type">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                {{ l.leave_type }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leave-dates">
+                                {{ l.start_date }} – {{ l.end_date }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge rounded-pill badge-status-{{ l.status }}">
+                                {{ l.status | capitalize }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fa-regular fa-calendar-xmark"></i>
+
+            <h3>No Leave Requests</h3>
+
+            <p>You haven't submitted any leave requests yet.</p>
+
+        </div>
+
+        {% endif %}
+
     </div>
-  </div>
+
 </div>
+
 {% endblock %}
