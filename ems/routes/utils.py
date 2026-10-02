@@ -14,10 +14,27 @@ def admin_required(view_func):
     return wrapped
 
 
+def hr_or_admin_required(view_func):
+    @wraps(view_func)
+    def wrapped(*args, **kwargs):
+        if (
+            not current_user.is_authenticated
+            or not (current_user.is_admin() or current_user.is_hr())
+        ):
+            abort(403)
+        return view_func(*args, **kwargs)
+
+    return wrapped
+
+
 def employee_required(view_func):
     @wraps(view_func)
     def wrapped(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.is_admin():
+        if (
+            not current_user.is_authenticated
+            or current_user.is_admin()
+            or current_user.is_hr()
+        ):
             abort(403)
         return view_func(*args, **kwargs)
 

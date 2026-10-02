@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Resumes{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div><h1>Resumes</h1><p class="text-muted mb-0">View employee resumes.</p></div>
+</div>
+
+<div class="card-flat">
+  <h2 class="h6 mb-3">Employee Resumes</h2>
+
+  {% if employee_resumes %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr><th>Employee</th><th>Employee ID</th><th>Designation</th><th>Department</th><th>Resume</th></tr></thead>
+      <tbody>
+      {% for item in employee_resumes %}
+        <tr>
+          <td><strong>{{ item.employee.full_name }}</strong></td>
+          <td>{{ item.employee.employee_code }}</td>
+          <td>{{ item.employee.designation or "—" }}</td>
+          <td>{{ item.employee.department.name if item.employee.department else "—" }}</td>
+          <td>
+            {% if item.filename %}
+              <a href="{{ url_for('hr.view_resume', employee_id=item.employee.id) }}" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-file-pdf me-1"></i>View Resume
+              </a>
+            {% else %}
+              <span class="badge bg-secondary">Not Available</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-file-circle-xmark fa-2x mb-3"></i>
+      <h3 class="h6">No employees found</h3>
+      <p class="mb-0">There are currently no employees in the system.</p>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,128 +1,36 @@
 {% extends "base.html" %}
-
 {% block title %}Employee Details{% endblock %}
-
 {% block content %}
+<div class="page-header"><div><h1>Employee Details</h1><p class="text-muted mb-0">Search and view employee records.</p></div></div>
 
-<!-- Page Header -->
-<div class="dashboard-header">
-
-    <div>
-        <h1>Employee Details</h1>
-        <p>View detailed information about all employees</p>
-    </div>
-
-    <a
-        href="{{ url_for('admin.employees') }}"
-        class="btn btn-outline-primary"
-    >
-        <i class="fa-solid fa-users me-1"></i>
-        Manage Employees
-    </a>
-
+<div class="card-flat mb-4">
+  <form method="get" action="{{ url_for('admin.employee_details') }}" class="search-bar">
+    <i class="fa-solid fa-magnifying-glass"></i><input name="search" value="{{ search }}" placeholder="Search name, code or designation...">
+    <button class="btn btn-primary">Search</button>
+    {% if search %}<a href="{{ url_for('admin.employee_details') }}" class="btn btn-light">Clear</a>{% endif %}
+  </form>
 </div>
 
-
-<!-- Employee Details -->
-<div class="card-flat">
-
-    <div class="section-header">
-
-        <div>
-            <h2>All Employees</h2>
-            <p>Select an employee to view their complete profile</p>
-        </div>
-
-        <div class="report-icon">
-            <i class="fa-solid fa-id-card"></i>
-        </div>
-
+{% if employee_data %}
+<div class="row g-3">
+{% for data in employee_data %}{% set e = data.employee %}
+  <div class="col-xl-4 col-md-6"><div class="card-flat h-100 employee-card">
+    <div class="table-person mb-3"><span class="avatar avatar-lg">{{ e.full_name[:1]|upper }}</span><div><h2 class="h6 mb-1">{{ e.full_name }}</h2><small>{{ e.employee_code }}</small></div></div>
+    <div class="mini-list mb-3">
+      <span><i class="fa-solid fa-briefcase"></i>{{ e.designation or 'No designation' }}</span>
+      <span><i class="fa-solid fa-building"></i>{{ e.department.name if e.department else 'No department' }}</span>
+      <span><i class="fa-solid fa-envelope"></i>{{ e.user.email if e.user else '—' }}</span>
     </div>
-
-
-    {% if employees %}
-
-    <div class="employee-details-grid">
-
-        {% for employee in employees %}
-
-        <div class="employee-detail-card">
-
-            <!-- Avatar -->
-            <div class="employee-detail-avatar">
-                {{ employee.full_name[0] | upper }}
-            </div>
-
-
-            <!-- Employee Information -->
-            <div class="employee-detail-info">
-
-                <h3>{{ employee.full_name }}</h3>
-
-                <div class="employee-detail-code">
-                    {{ employee.employee_code }}
-                </div>
-
-                <div class="employee-detail-meta">
-
-                    <span>
-                        <i class="fa-solid fa-building"></i>
-
-                        {% if employee.department %}
-                            {{ employee.department.name }}
-                        {% else %}
-                            No Department
-                        {% endif %}
-
-                    </span>
-
-                    <span>
-                        <i class="fa-solid fa-briefcase"></i>
-                        {{ employee.designation or "No Designation" }}
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- View Button -->
-            <a
-                href="{{ url_for('admin.employee_profile', employee_id=employee.id) }}"
-                class="btn btn-primary btn-sm employee-detail-button"
-            >
-                <i class="fa-solid fa-eye me-1"></i>
-                View Details
-            </a>
-
-        </div>
-
-        {% endfor %}
-
+    <div class="mini-stats">
+      <div><b>{{ data.salary_history|length }}</b><small>Salary</small></div>
+      <div><b>{{ data.attendance_count }}</b><small>Attendance</small></div>
+      <div><b>{{ data.leave_count }}</b><small>Leaves</small></div>
     </div>
-
-    {% else %}
-
-    <div class="empty-state">
-
-        <i class="fa-solid fa-users"></i>
-
-        <h3>No Employees</h3>
-
-        <p>There are no employees registered yet.</p>
-
-        <a
-            href="{{ url_for('admin.add_employee') }}"
-            class="btn btn-primary btn-sm"
-        >
-            <i class="fa-solid fa-plus me-1"></i>
-            Add Employee
-        </a>
-
-    </div>
-
-    {% endif %}
-
+    <a href="{{ url_for('admin.employee_detail', employee_id=e.id) }}" class="btn btn-primary w-100 mt-3"><i class="fa-solid fa-eye me-1"></i>View Details</a>
+  </div></div>
+{% endfor %}
 </div>
-
+{% else %}
+<div class="card-flat"><div class="empty-state"><i class="fa-solid fa-user-slash"></i><h2 class="h6">No employees found</h2>{% if search %}<p>No employees matched "{{ search }}".</p><a href="{{ url_for('admin.employee_details') }}" class="btn btn-outline-primary">Show All</a>{% else %}<p>No employees are available.</p>{% endif %}</div></div>
+{% endif %}
 {% endblock %}

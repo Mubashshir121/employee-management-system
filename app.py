@@ -18,10 +18,12 @@ def create_app():
     from routes.auth import auth_bp
     from routes.admin import admin_bp
     from routes.employee import employee_bp
+    from routes.hr import hr_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(employee_bp)
+    app.register_blueprint(hr_bp)
 
     @app.route("/")
     def index():

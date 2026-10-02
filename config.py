@@ -2,21 +2,19 @@ import os
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, ".env"))
+load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
 
-    DB_USER = os.environ.get("DB_USER", "root")
-    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-    DB_HOST = os.environ.get("DB_HOST", "localhost")
-    DB_PORT = os.environ.get("DB_PORT", "3306")
-    DB_NAME = os.environ.get("DB_NAME", "employee_management")
+    user = os.getenv("DB_USER", "root")
+    password = quote_plus(os.getenv("DB_PASSWORD", ""))
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "3306")
+    name = os.getenv("DB_NAME", "employee_management")
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
+    SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+        f"mysql+pymysql://{quote_plus(user)}:{password}@{host}:{port}/{name}"
     )
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False

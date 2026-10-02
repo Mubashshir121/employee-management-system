@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} Details{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div><h1 class="fw-bold">{{ employee.full_name }}</h1><p class="text-muted">Employee ID: {{ employee.employee_code }}</p></div>
+  <a href="{{ url_for('hr.employees') }}" class="btn btn-outline-primary">← Back to Employees</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-4"><div class="card-body">
+  <h4 class="mb-3">Personal Information</h4>
+  <div class="row">
+    <div class="col-md-6 mb-3"><strong>Full Name</strong><p>{{ employee.full_name }}</p></div>
+    <div class="col-md-6 mb-3"><strong>Employee ID</strong><p>{{ employee.employee_code }}</p></div>
+    <div class="col-md-6 mb-3"><strong>Phone</strong><p>{{ employee.phone or "—" }}</p></div>
+    <div class="col-md-6 mb-3"><strong>Email</strong><p>{{ employee.user.email }}</p></div>
+    <div class="col-md-12 mb-3"><strong>Address</strong><p>{{ employee.address or "—" }}</p></div>
+  </div>
+</div></div>
+
+<div class="card shadow-sm border-0 mb-4"><div class="card-body">
+  <h4 class="mb-3">Employment Information</h4>
+  <div class="row">
+    <div class="col-md-6"><strong>Designation</strong><p>{{ employee.designation or "—" }}</p></div>
+    <div class="col-md-6"><strong>Department</strong><p>{{ employee.department.name if employee.department else "—" }}</p></div>
+  </div>
+</div></div>
+
+<div class="card shadow-sm border-0"><div class="card-body">
+  <h4 class="mb-3">Employee Documents</h4>
+  <div class="row">
+    <div class="col-md-6"><div class="border rounded p-3"><h5>Resume</h5><p class="text-muted">Employee resume document.</p><a href="{{ url_for('hr.resumes') }}" class="btn btn-primary btn-sm">View Resume</a></div></div>
+    <div class="col-md-6"><div class="border rounded p-3"><h5>Offer Letter</h5><p class="text-muted">Employee offer letter document.</p><a href="{{ url_for('hr.offer_letters') }}" class="btn btn-primary btn-sm">View Offer Letter</a></div></div>
+  </div>
+</div></div>
+
+{% endblock %}

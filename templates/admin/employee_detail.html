@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} · Employee Details{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><a href="{{ url_for('admin.employee_details') }}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Employee Details</a>
+    <div class="profile-head"><span class="avatar avatar-xl">{{ employee.full_name[:1]|upper }}</span><div><h1>{{ employee.full_name }}</h1><p>{{ employee.employee_code }}{% if employee.designation %} · {{ employee.designation }}{% endif %}{% if employee.department %} · {{ employee.department.name }}{% endif %}</p></div></div>
+  </div>
+</div>
+
+<div class="card-flat mb-4">
+  <div class="section-title"><i class="fa-solid fa-user"></i> Personal & Employment</div>
+  <div class="detail-grid">
+    <div><small>Employee Code</small><b>{{ employee.employee_code }}</b></div>
+    <div><small>Full Name</small><b>{{ employee.full_name }}</b></div>
+    <div><small>Email</small><b>{{ employee.user.email if employee.user else '—' }}</b></div>
+    <div><small>Phone</small><b>{{ employee.phone or '—' }}</b></div>
+    <div><small>Designation</small><b>{{ employee.designation or '—' }}</b></div>
+    <div><small>Department</small><b>{{ employee.department.name if employee.department else '—' }}</b></div>
+    <div><small>Date Joined</small><b>{{ employee.date_joined or '—' }}</b></div>
+    <div class="wide"><small>Address</small><b>{{ employee.address or '—' }}</b></div>
+  </div>
+</div>
+
+{% for title,icon,records,empty in [
+  ('Salary History','fa-sack-dollar',salary_history,'No salary records available.'),
+  ('Attendance History','fa-calendar-check',attendance_history,'No attendance records available.'),
+  ('Leave History','fa-plane-departure',leave_history,'No leave records available.')
+] %}
+<div class="card-flat mb-4">
+  <div class="section-title"><i class="fa-solid {{ icon }}"></i>{{ title }}</div>
+  {% if records %}
+  <div class="table-responsive"><table class="table table-hover align-middle mb-0">
+    {% if title == 'Salary History' %}
+    <thead><tr><th>Month</th><th>Year</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th><th>Paid On</th></tr></thead>
+    <tbody>{% for r in records %}<tr><td>{{ r.month }}</td><td>{{ r.year }}</td><td>₹{{ r.basic }}</td><td>₹{{ r.allowances }}</td><td>₹{{ r.deductions }}</td><td><strong>₹{{ r.net_salary }}</strong></td><td>{{ r.paid_on or '—' }}</td></tr>{% endfor %}</tbody>
+    {% elif title == 'Attendance History' %}
+    <thead><tr><th>Date</th><th>Status</th><th>Check In</th><th>Check Out</th></tr></thead>
+    <tbody>{% for r in records %}<tr><td>{{ r.date }}</td><td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td><td>{{ r.check_in or '—' }}</td><td>{{ r.check_out or '—' }}</td></tr>{% endfor %}</tbody>
+    {% else %}
+    <thead><tr><th>Type</th><th>Start</th><th>End</th><th>Reason</th><th>Status</th><th>Applied On</th></tr></thead>
+    <tbody>{% for r in records %}<tr><td>{{ r.leave_type }}</td><td>{{ r.start_date }}</td><td>{{ r.end_date }}</td><td>{{ r.reason or '—' }}</td><td><span class="badge badge-status-{{ r.status }}">{{ r.status }}</span></td><td>{{ r.applied_on.strftime('%Y-%m-%d %H:%M') if r.applied_on else '—' }}</td></tr>{% endfor %}</tbody>
+    {% endif %}
+  </table></div>
+  {% else %}<div class="empty-state"><i class="fa-solid {{ icon }}"></i><p>{{ empty }}</p></div>{% endif %}
+</div>
+{% endfor %}
+{% endblock %}

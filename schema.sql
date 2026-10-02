@@ -1,12 +1,10 @@
--- Employee Management System — MySQL schema
--- Run this manually if you prefer raw SQL instead of `flask --app app init-db`.
-
-USE railway;
+CREATE DATABASE IF NOT EXISTS employee_management CHARACTER SET utf8mb4;
+USE employee_management;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(80) NOT NULL UNIQUE,
-    email VARCHAR(120) NOT NULL UNIQUE,
+    username VARCHAR(80) UNIQUE NOT NULL,
+    email VARCHAR(120) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'employee',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -14,14 +12,14 @@ CREATE TABLE users (
 
 CREATE TABLE departments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) UNIQUE NOT NULL,
     description VARCHAR(255)
 );
 
 CREATE TABLE employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
-    employee_code VARCHAR(20) NOT NULL UNIQUE,
+    user_id INT UNIQUE NOT NULL,
+    employee_code VARCHAR(20) UNIQUE NOT NULL,
     full_name VARCHAR(120) NOT NULL,
     phone VARCHAR(20),
     address VARCHAR(255),
@@ -39,7 +37,7 @@ CREATE TABLE attendance (
     status VARCHAR(20) NOT NULL DEFAULT 'present',
     check_in TIME,
     check_out TIME,
-    UNIQUE KEY uq_employee_date (employee_id, date),
+    UNIQUE(employee_id, date),
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
@@ -65,6 +63,6 @@ CREATE TABLE salary (
     deductions DECIMAL(10,2) NOT NULL DEFAULT 0,
     net_salary DECIMAL(10,2) NOT NULL DEFAULT 0,
     paid_on DATE,
-    UNIQUE KEY uq_employee_month_year (employee_id, month, year),
+    UNIQUE(employee_id, month, year),
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
